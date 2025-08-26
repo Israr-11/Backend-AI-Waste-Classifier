@@ -17,10 +17,10 @@ def upload_media(file) -> dict:
     try:
         setup_cloudinary()
         
-        # Get the file content directly
+        # GET THE FILE CONTENT DIRECTLY
         result = cloudinary.uploader.upload(
             file,
-            folder="uploads"  # This creates/uses a folder in Cloudinary
+            folder="uploads"  # THIS CREATES/USES A FOLDER IN CLOUDINARY
         )
         
         return {

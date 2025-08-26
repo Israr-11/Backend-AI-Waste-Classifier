@@ -3,17 +3,14 @@ from pymongo.server_api import ServerApi
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 mongo_url = os.getenv("MONGO_URI")
 db_name = os.getenv("DB_NAME")
 
-# Connect to MongoDB Atlas
 client = MongoClient(mongo_url, server_api=ServerApi('1'))
 db = client[db_name]
-collection = db["recycling_instruction"]  # Explicitly set collection name
+collection = db["recycling_instruction"]  
 
-# Recycling instructions data
 instructions = [
     {
         "category": "plastic",
@@ -60,7 +57,6 @@ instructions = [
 ]
 
 
-# Insert data into MongoDB
 try:
     result = collection.insert_many(instructions)
     print(f"Inserted {len(result.inserted_ids)} recycling instructions successfully!")

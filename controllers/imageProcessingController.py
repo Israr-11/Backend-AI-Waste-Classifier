@@ -6,7 +6,7 @@ router = APIRouter()
 @router.post("/upload_image", response_model=dict)
 async def upload_image(image_file: UploadFile = File(...)) -> dict:
     try:
-        # Call the service to process image and get recycling instructions
+        # CALLING THE SERVICE TO PROCESS IMAGE AND GET RECYCLING INSTRUCTIONS
         print("Received image for processing...")
         result = process_image_and_get_instructions(image_file.file)
         print(f"Result in imageProcessingController: {result}")

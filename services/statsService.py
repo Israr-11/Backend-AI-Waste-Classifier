@@ -8,38 +8,38 @@ def get_prediction_stats(date: Optional[datetime] = None,
     try:
         collection_pred, collection_instructions, collection_feedback = dBConnection()
         
-        # Build query filters
+        # BUILD QUERY FILTERS
         query = {}
         
-        # Add single date filter if provided
+        # ADDING SINGLE DATE FILTER IF PROVIDED
         if date:
-            # Set start to beginning of the specified date (00:00:00)
+            # SETTING START TO BEGINNING OF THE SPECIFIED DATE (00:00:00)
             start = datetime.combine(date.date(), time.min)
-            # Set end to end of the specified date (23:59:59)
+            # SETTING END TO END OF THE SPECIFIED DATE (23:59:59)
             end = datetime.combine(date.date(), time.max)
             query["entryTime"] = {"$gte": start, "$lte": end}
-            
-        # Add category filter if provided
+
+        # ADDING CATEGORY FILTER IF PROVIDED
         if category:
             query["category"] = category
-            
-        # Validate that we have at least one filter
+
+        # VALIDATING THAT WE HAVE AT LEAST ONE FILTER
         if not query:
             raise HTTPException(status_code=400, detail="At least one filter (date or category) must be provided")
             
         print(f"Query filter: {query}")
         
-        # Get all matching predictions
+        # GETTING ALL MATCHING PREDICTIONS
         predictions = list(collection_pred.find(query))
         print(f"Found {len(predictions)} predictions")
-        
-        # Calculate statistics
+
+        # CALCULATING STATISTICS
         total_predictions = len(predictions)
         correct_predictions = sum(1 for pred in predictions 
                                 if pred["original_prediction"] == pred["correct_classification"])
         incorrect_predictions = total_predictions - correct_predictions
-        
-        # Calculate category-wise breakdown
+
+        # CALCULATING CATEGORY-WISE BREAKDOWN
         category_stats = {}
         for pred in predictions:
             cat = pred["category"]

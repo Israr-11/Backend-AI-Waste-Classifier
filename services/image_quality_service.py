@@ -31,7 +31,7 @@ def enhance_image(image: Image.Image) -> Image.Image:
     kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
     sharpened = cv2.filter2D(enhanced_image, -1, kernel)
 
-    # Convert back to PIL Image
+    # CONVERT BACK TO PIL IMAGE
     return Image.fromarray(cv2.cvtColor(sharpened, cv2.COLOR_BGR2RGB))
 
 def calculate_clarity(image: Image.Image) -> float:
@@ -39,8 +39,8 @@ def calculate_clarity(image: Image.Image) -> float:
     Estimates image clarity using the Laplacian variance method.
     A higher variance means a sharper image.
     """
-    image_cv = np.array(image.convert("L"))  # Convert to grayscale
-    variance = cv2.Laplacian(image_cv, cv2.CV_64F).var()  # Calculate variance
+    image_cv = np.array(image.convert("L"))  
+    variance = cv2.Laplacian(image_cv, cv2.CV_64F).var()  
     return variance
 
 def validate_image(image: Image.Image, clarity_threshold: float = 100.0) -> bool:
@@ -56,14 +56,14 @@ def prepare_image_for_model(image: Image.Image) -> str:
     Enhances and validates an image before sending it to the ML model.
     Returns the base64 string of the processed image.
     """
-    # Enhance image quality
+    # ENHANCING IMAGE QUALITY
     enhanced_image = enhance_image(image)
 
-    # Check clarity before sending
+    # CHECKING CLARITY BEFORE SENDING
     if not validate_image(enhanced_image):
         raise ValueError("Image clarity is too low. Please upload a clearer image.")
 
-    # Convert to base64
+    # CONVERTING TO BASE64
     buffered = BytesIO()
     enhanced_image.save(buffered, format="JPEG")
     return base64.b64encode(buffered.getvalue()).decode("utf-8")

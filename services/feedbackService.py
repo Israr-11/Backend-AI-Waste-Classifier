@@ -2,7 +2,6 @@ from fastapi import HTTPException, status
 from utils.database import dBConnection
 from models.feedback import UserFeedBack  
 
-# Define techniques categories
 PREPROCESSING_TECHNIQUES = [
   "Adjust brightness",
   "Adjust contrast",
@@ -30,35 +29,35 @@ def save_feedback(feedback: UserFeedBack):
         
         feedback_data = feedback.to_dict()
         print(f"Feedback data: {feedback_data}")
-        
-        # Always store the feedback
+
+        # SAVING THE FEEDBACK
         collection_feedback.insert_one(feedback_data)
         
         response = {"status": "SUCCESSFUL"}
         
         if feedback_data["is_correct"] == True:
-            # User confirmed the prediction was correct
+            # USER CONFIRMED THE PREDICTION WAS CORRECT
             response["message"] = "Feedback saved successfully. Thank you for confirming our prediction!"
         else:
-            # User indicated the prediction was incorrect
-            # Update the prediction collection with the correct category
+            # USER INDICATED THE PREDICTION WAS INCORRECT
+            # UPDATING THE PREDICTION COLLECTION WITH THE CORRECT CATEGORY
             collection_pred.update_one(
                 {"image_hash": feedback_data["image_hash"]},
                 {"$set": {"correct_classification": feedback_data["correct_category"]}}
             )
             
-            # Get the original prediction for comparison
+            # GETTING THE ORIGINAL PREDICTION FOR COMPARISON
             original_prediction = collection_pred.find_one({"image_hash": feedback_data["image_hash"]})
             
             if original_prediction:
-                # Get techniques the user has already tried
+                # GET TECHNIQUES THE USER HAS ALREADY TRIED
                 tried_before = feedback_data.get("tried_techniques", [])
                 
-                # Filter out techniques they've already tried
+                # FILTERING OUT TECHNIQUES THEY'VE ALREADY TRIED
                 untried_preprocessing = [tech for tech in PREPROCESSING_TECHNIQUES if tech not in tried_before]
                 untried_new_photo = [tech for tech in NEW_PHOTO_TECHNIQUES if tech not in tried_before]
-                
-                # Create messages for each category
+
+                # CREATING MESSAGES FOR EACH CATEGORY
                 preprocessing_message = ""
                 if untried_preprocessing:
                     preprocessing_message = "Try these adjustments to your current image:\n"
@@ -71,7 +70,7 @@ def save_feedback(feedback: UserFeedBack):
                     for i, technique in enumerate(untried_new_photo, 1):
                         new_photo_message += f"{i}. {technique}. "
                 
-                # Combine messages
+                # COMBINING MESSAGES
                 if preprocessing_message and new_photo_message:
                     full_message = f"Thank you for the correction! {preprocessing_message}\n\n{new_photo_message}"
                 elif preprocessing_message:
@@ -80,8 +79,8 @@ def save_feedback(feedback: UserFeedBack):
                     full_message = f"Thank you for the correction! {new_photo_message}"
                 else:
                     full_message = "Thank you for the correction! You've tried all our suggested techniques."
-                
-                # Add image quality improvement suggestions
+
+                # ADDING IMAGE QUALITY IMPROVEMENT SUGGESTIONS
                 response["message"] = full_message
                 response["original_category"] = original_prediction.get("original_prediction")
                 response["corrected_category"] = feedback_data["correct_category"]

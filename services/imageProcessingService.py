@@ -18,7 +18,7 @@ def generate_image_hash(image_file) -> str:
     img_byte_arr = BytesIO()
     image.save(img_byte_arr, format='PNG')
     image_bytes = img_byte_arr.getvalue()
-    image_hash = hashlib.sha256(image_bytes).hexdigest()  # Generate a hash using SHA-256
+    image_hash = hashlib.sha256(image_bytes).hexdigest()  # GENERATING A HASH USING SHA-256
     return image_hash
 
 def process_image(image_file) -> np.ndarray:
@@ -26,9 +26,9 @@ def process_image(image_file) -> np.ndarray:
     Preprocess the image (resize to 128x128 and normalize).
     """
     image = Image.open(image_file)
-    image = image.resize((128, 128))  # Resize image to 128x128
-    img_array = np.array(image) / 255.0  # Normalize the image to [0, 1]
-    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+    image = image.resize((128, 128))  # RESIZING IMAGE TO 128X128
+    img_array = np.array(image) / 255.0  # NORMALIZING THE IMAGE TO [0, 1]
+    img_array = np.expand_dims(img_array, axis=0)  # ADDING BATCH DIMENSION
     return img_array
 
 def get_recycling_instructions(category: str):
@@ -59,7 +59,7 @@ def save_prediction(image_hash: str, predicted_category: str, image_url: str):
     try:
         collection_pred, collection_instructions, collection_feedback  = dBConnection()
 
-        # Save prediction in the prediction collection
+        # SAVING PREDICTION IN THE PREDICTION COLLECTION
 
         #print(f"Saving prediction for image: {image_hash} and category: {predicted_category} ")
         prediction_data = {
@@ -92,7 +92,7 @@ def process_image_and_get_instructions(image_file) -> dict:
 
     image_hash = generate_image_hash(image_file)
     #print(f"Image hash line 80: {image_hash}")
-    # Step 1: Check if the image already has a prediction in the database
+    # STEP 1: CHECK IF THE IMAGE ALREADY HAS A PREDICTION IN THE DATABASE
     collection_pred, collection_instructions, collection_feedback = dBConnection()
     existing_prediction =  collection_pred.find_one({"image_hash": image_hash})
     #print(f"Existing prediction: {existing_prediction}")
@@ -101,25 +101,25 @@ def process_image_and_get_instructions(image_file) -> dict:
        category_pred = existing_prediction.get("original_prediction")
        category_correct = existing_prediction.get("correct_classification")
 
-    # Make sure correct classification is valid
+    # MAKE SURE CORRECT CLASSIFICATION IS VALID
        category = category_correct if category_correct else category_pred
 
        #print(f"Using category for instructions: {category}")
 
-    # Fetch correct recycling instructions
+    # FETCH CORRECT RECYCLING INSTRUCTIONS
        recycling_instructions = get_recycling_instructions(category)
 
        return {"image_hash": image_hash, "recycling_instructions": recycling_instructions}
 
 
-    # Step 2: If no prediction, send the image to ML model for prediction
+    # STEP 2: IF NO PREDICTION, SEND THE IMAGE TO ML MODEL FOR PREDICTION
     img_array = process_image(image_file)  # Preprocess image for ML model
     predicted_category = predict_category(img_array)  # Get the prediction from ML model
     print(f"Predicted category line 97: {predicted_category}")
-    # Step 3: Save prediction in the prediction table
+    # STEP 3: SAVING PREDICTION IN THE PREDICTION TABLE
     save_prediction(image_hash, predicted_category, image_url)
 
-    # Step 4: Fetch the recycling instructions for the predicted category
+    # STEP 4: FETCHING THE RECYCLING INSTRUCTIONS FOR THE PREDICTED CATEGORY
     recycling_instructions = get_recycling_instructions(predicted_category)
     print(f"Recycling instructions for {predicted_category} line 124: {recycling_instructions}")
     return {"image_hash": image_hash, "image_url": image_url, "recycling_instructions": recycling_instructions}

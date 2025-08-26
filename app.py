@@ -7,14 +7,14 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (or specify your frontend URL)
+    allow_origins=["*"],  # ALLOWING ALL ORIGINS
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(router)  # Mount the order router
-app.include_router(feedback_router)  # Mount the feedback router
-app.include_router(stats_router)  # Mount the stats router
+app.include_router(router)  # MOUNTING THE ORDER ROUTER
+app.include_router(feedback_router)  # MOUNTING THE FEEDBACK ROUTER
+app.include_router(stats_router)  # MOUNTING THE STATS ROUTER
 
 if __name__ == "__main__":
     import uvicorn

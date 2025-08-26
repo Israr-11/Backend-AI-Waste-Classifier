@@ -5,7 +5,7 @@ import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 
-# Loaded the trained model
+# LOADING THE TRAINED MODEL
 model_path = os.path.join(os.getcwd(), 'machineLearning', 'waste_classification_model_v2.keras')
 model = tf.keras.models.load_model(model_path)
 
@@ -16,10 +16,10 @@ def predict_category(img_array: np.ndarray) -> tuple:
     Given a preprocessed image array, make a prediction using the trained ML model.
     Returns the predicted class and the model's confidence score.
     """
-    # Predict the class using the model
+    # PREDICTING THE CLASS USING THE MODEL
     prediction = model.predict(img_array)
     
-    # Get the predicted class and confidence (probability)
+    # GETTING THE PREDICTED CLASS AND CONFIDENCE (PROBABILITY)
     predicted_class = class_names[np.argmax(prediction)]
     #confidence = np.max(prediction)  # Confidence of the predicted class
     

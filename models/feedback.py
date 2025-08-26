@@ -11,11 +11,11 @@ class UserFeedBack(BaseModel):
 
     @field_validator('entryTime', mode="before")
     def validate_entry_time(cls, v):
-        if isinstance(v, str):  # Convert string timestamps to datetime
+        if isinstance(v, str):  # CONVERTING STRING TIMESTAMPS TO DATETIME
             return datetime.fromisoformat(v)
         if not isinstance(v, datetime):
             raise ValueError('entryTime must be a datetime object')
         return v
 
     def to_dict(self):
-        return self.model_dump()  # Convert to dictionary for MongoDB
+        return self.model_dump()  # CONVERTING TO DICTIONARY FOR MONGODB
