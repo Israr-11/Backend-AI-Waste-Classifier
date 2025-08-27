@@ -10,6 +10,7 @@ from utils.database import dBConnection
 from datetime import datetime
 
 
+
 def generate_image_hash(image_file) -> str:
     """
     Generate a unique hash for the uploaded image.
